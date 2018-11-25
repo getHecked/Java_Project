@@ -5,7 +5,12 @@
  */
 package Frames;
 
+import java.awt.event.ActionListener;
+import java.util.TimerTask;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java_project.Controller;
+import java.util.Timer;
 
 /**
  *
@@ -14,9 +19,11 @@ import java_project.Controller;
 public class Temperature extends javax.swing.JFrame {
 
     static Controller controller;
+    int change_temp;
+
     public Temperature(Controller con) {
         initComponents();
-        this.controller=con;
+        this.controller = con;
         jLabel2.hide();
         jLabel5.hide();
         target_temp.hide();
@@ -180,47 +187,80 @@ public class Temperature extends javax.swing.JFrame {
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
 
-        if (controller.getTemp().status==true)
-        {
-            controller.getTemp().status=false;
+        if (controller.getTemp().status == true) {
+            controller.getTemp().status = false;
             status_label.setText("Off");
             current_temp.setText("-");
             jLabel2.hide();
-        }
-        else
-        {
-            controller.getTemp().status=true;
+        } else {
+            controller.getTemp().status = true;
             status_label.setText("On");
+            change_temp = controller.getTemp().default_temp;
             current_temp.setText(Integer.toString(controller.getTemp().default_temp));
             jLabel2.show();
         }
-     
+
 
     }//GEN-LAST:event_jButton3ActionPerformed
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-        
         target_temp.show();
-        target_temp_value.setText(Integer.toString(Integer.parseInt(current_temp.getText())+1));
+        target_temp_value.setText(Integer.toString(Integer.parseInt(current_temp.getText()) + 5));
         target_temp_value.show();
         jLabel5.show();
-        
-        // hide after Thread shit 
+
+        TimerTask task = new TimerTask() {
+            @Override
+            public void run() {
+                while (true) {
+                    change_temp = change_temp + 1;
+                    current_temp.setText(Integer.toString(change_temp));
+                    if (Integer.parseInt(current_temp.getText()) == Integer.parseInt(target_temp_value.getText())) {
+                        target_temp.hide();
+                        target_temp_value.hide();
+                        jLabel5.hide();
+                        break;
+                    }
+
+                }
+            }
+        };
+        Timer timer = new Timer();
+        timer.schedule(task, 2000);
+
+
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         target_temp.show();
-        target_temp_value.setText(Integer.toString(Integer.parseInt(current_temp.getText())-1));
+        target_temp_value.setText(Integer.toString(Integer.parseInt(current_temp.getText()) - 5));
         target_temp_value.show();
         jLabel5.show();
-        
+        TimerTask task = new TimerTask() {
+            @Override
+            public void run() {
+                while (true) {
+                    change_temp = change_temp - 1;
+                    current_temp.setText(Integer.toString(change_temp));
+                    if (Integer.parseInt(current_temp.getText()) == Integer.parseInt(target_temp_value.getText())) {
+                        target_temp.hide();
+                        target_temp_value.hide();
+                        jLabel5.hide();
+                        break;
+                    }
+
+                }
+            }
+        };
+        Timer timer = new Timer();
+        timer.schedule(task, 2000);
         // hide after Thread shit 
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
-       Start_controller con = new Start_controller(controller);
-       con.show();
-       dispose();
+        Start_controller con = new Start_controller(controller);
+        con.show();
+        dispose();
     }//GEN-LAST:event_jButton4ActionPerformed
 
     /**
